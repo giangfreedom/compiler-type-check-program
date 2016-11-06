@@ -50,35 +50,49 @@ public class PatternMatching {
 	
 	private static final String patternfuncname = c + "[a-zA-z0-9]{1,14}";
 	
-	private static final String patternvariablename = "^"+c + "[a-zA-z0-9]{1,14}$";
+	private static final String patternvariablename = "^[a-zA-z][a-zA-z0-9]{1,14}$";
 	private static final Pattern variable = Pattern.compile(patternvariablename);
 	
 	
-	private static final String patternparameter = "([int|double|char|float|long|short|bool]\\s[a-zA-z][a-zA-z0-9]{1,14}){1,14}";
+	private static final String patternparameter = "[int|double|char|float|long|short|bool]\\s[a-zA-z][a-zA-z0-9]{1,14}){1,14}";
 	private static final Pattern parameter = Pattern.compile(patternparameter);
 	
 	private static final String patternfuncreturntype = ("[(^)int|(^)double|(^)char|(^)float|(^)long|(^)short|(^)bool|(^)void]");
-	private static final String patternfuncheader = "^" + "[int|double|char|float|long|short|bool|void]\\s[a-zA-z][a-zA-z0-9]{1,14}\\s(\\s" + patternparameter +"\\s)$";
+	private static final String patternfuncheader = "^" + "[int|double|char|float|long|short|bool|void]\\s[a-zA-z][a-zA-z0-9]{1,14}\\s[(]\\s[int|double|char|float|long|short|bool]\\s[a-zA-z][a-zA-z0-9]{1,14}){1,14}+(,\\s[[int|double|char|float|long|short|bool]\\s[a-zA-z][a-zA-z0-9]{1,14}){1,14}]+)*\\s[)]$";
+	//  String regex = "^[a-zA-Z ]+(,[a-zA-Z ]+)*$";
+	//  System.out.println("abc,xyz,pqr".matches(regex)); // true
+    //  System.out.println("text1,text2,".matches(regex)); // false
 	
 	private static final Pattern funcheader = Pattern.compile(patternfuncheader);
 	
-	private static final Pattern funcCallTwoArgument = Pattern.compile("^"+patternfuncname + "(" + patternvariablename +",\\s"+ patternvariablename + ");$");
+	private static final Pattern funcCallTwoArgument = Pattern.compile("^"+patternfuncname + "[(]" + patternvariablename +",\\s"+ patternvariablename + "[)][;]$");
 	
+	private static final Pattern patternReturn = Pattern.compile("(^)return\\s[a-zA-z][a-zA-z0-9]{1,14}[;]$");
+	
+	private static final Pattern variableAssignFunction = Pattern.compile("^[a-zA-z][a-zA-z0-9]{1,14}\\s[=]\\s[a-zA-z][a-zA-z0-9]{1,14}[(][a-zA-z][a-zA-z0-9]{1,14}[,]\\s[a-zA-z][a-zA-z0-9]{1,14}[)][;]$");
 	
 	// NOTE we won't have " int a = 1+2 " or "int a = a+b" a+# or #+b or a+b+c or etc...
 	// WE WILL ONLY HAVE THE BASE CASE int a; or int a = #;
-	private static final Pattern varNumberVer1 = Pattern.compile("^" + "[int|double|float|long|short]\\s[a-zA-z][a-zA-z0-9]{0,14}"+";$");
-	private static final Pattern varnumberVer2 = Pattern.compile("^" + "[int|double|float|long|short]\\s[a-zA-z][a-zA-z0-9]{0,14}\\s"+ "=\\s[0-9]{1,14}"+";$");
-	private static final Pattern varCharVer1 = Pattern.compile("^" + "char\\s[a-zA-z][a-zA-z0-9]{0,14}"+";$");
-	private static final Pattern varCharVer2 = Pattern.compile("^" + "char\\s[a-zA-z][a-zA-z0-9]{0,14}\\s"+ "=\\s"+"'"+"[a-zA-z]"+"'"+";$");
-	private static final Pattern varBoolVer1 = Pattern.compile("^" + "bool\\s[a-zA-z][a-zA-z0-9]{0,14}"+";$");
-	private static final Pattern varBoolVer2 = Pattern.compile("^" + "bool\\s[a-zA-z][a-zA-z0-9]{0,14}\\s"+ "=\\s[true|false]"+";$");
+	private static final Pattern varNumberVer1 = Pattern.compile("^" + "[int|double|float|long|short]\\s[a-zA-z][a-zA-z0-9]{0,14}"+"[;]$");
+	private static final Pattern varnumberVer2 = Pattern.compile("^" + "[int|double|float|long|short]\\s[a-zA-z][a-zA-z0-9]{0,14}\\s"+ "=\\s[0-9]{1,14}"+"[;]$");
+	private static final Pattern varCharVer1 = Pattern.compile("^" + "char\\s[a-zA-z][a-zA-z0-9]{0,14}"+"[;]$");
+	private static final Pattern varCharVer2 = Pattern.compile("^" + "char\\s[a-zA-z][a-zA-z0-9]{0,14}\\s"+ "=\\s"+"'"+"[a-zA-z]"+"'"+"[;]$");
+	private static final Pattern varBoolVer1 = Pattern.compile("^" + "bool\\s[a-zA-z][a-zA-z0-9]{0,14}"+"[;]$");
+	private static final Pattern varBoolVer2 = Pattern.compile("^" + "bool\\s[a-zA-z][a-zA-z0-9]{0,14}\\s"+ "=\\s[true|false]"+"[;]$");
 
 	//private static final Pattern variableDeclation = Pattern.compile("[var1|var2]"));
 	public static boolean visitVariableDeclaration (String target) {
 		return (varNumberVer1.matcher(target).find() || varnumberVer2.matcher(target).find()
 				|| varCharVer1.matcher(target).find() || varCharVer2.matcher(target).find()
 				|| varBoolVer1.matcher(target).find() || varBoolVer2.matcher(target).find());
+	}
+	
+	public static boolean visitReturn (String target) {
+		return patternReturn.matcher(target).find();
+	}
+	
+	public static boolean visitVarAssignFunc (String target) {
+		return variableAssignFunction.matcher(target).find();
 	}
 	
 	public static boolean visitFunctionCall (String target) {

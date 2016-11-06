@@ -17,12 +17,12 @@ public class typecheck {
 	
 	// hash map that store the function info
 	// key is function name, value is an arraylist
-	// 1st item in arraylist is function return typr
+	// 1st item in arraylist is function return type
 	// 2nd item is function unique id
 	// 3rd is function param count
 	// 4th param return type, 5th param name
 	// 6th param return type, 7th param name
-	// caculator add/minus/mul/ div functions only have 2 param.
+	// calculator add/minus/mul/ div functions only have 2 param.
 	private static HashMap<String, ArrayList<String>> mFunctionIndex;
 	
 	// hashmap that store variable info
@@ -155,7 +155,52 @@ public class typecheck {
 			if(pass == true){
 				System.out.println("function call passed");
 			}
+			// reset pass for next run
+			pass = true;
 		}
+		else if(mycheck.visitReturn(input)){
+			// check for return type
+			// return varname;
+			// remove the semicolon
+			input = RemoveAllCommaNSemicolon(input);
+			// arr[] should only have 2 item arr[0] = return, arr[1] = varname
+			// pull out varname search variable hash table and get the varname data type
+			// match it vs the function return type (which function? look for functionid = returncount
+			// returncount start at zero everytime this condition pass it will increase by 1 before exit else if
+			
+			// pick up the return type (value) from variable hashmap by supply in the key(variable name)
+			String varDatatype = mVariableIndex.get(arr[1]);
+			// compare return type and function return type
+			if(!(varDatatype.equals(functionReturnType(returncount)))){
+				System.out.println("error code 8 function return type and return data type do not match");
+			}
+			// update returncount for next return statement
+			returncount++;
+		}
+		else if(mycheck.visitVarAssignFunc(input)){
+			// varname = functioncall(argument1, argument2);
+			// if we get this statement
+			// first we replace paranthesis with space then remove ; and ,
+			input.replaceAll("(", " ");
+			input.replaceAll(")", " ");
+			// remove comma and semicolon
+			input = RemoveAllCommaNSemicolon(input);
+			input = input.trim();
+			// we get this
+			// varname = functioncall argument1 argument2
+			// split them into an array using split and space delimiter
+			String sVAF[] = input.split(" ");
+			// pick up the variable data type by going to the variable hashmap
+			// supply the key sVAF[0] and get the value (data type) out
+			// compare it to the function return type (go to function hashmap
+			// supply the function name for key and get value array then subscript 
+			// zero to get function return type. Compare them if they do not match
+			// output error 9 else they pass
+			if(!(mVariableIndex.get(sVAF[0]).equals(mFunctionIndex.get(sVAF[2]).get(0)))){
+				System.out.println("error code 9 function return type and variable data type do not match");
+			}
+		}
+		
 		// check return eror code 8 
 		// else if (return stuff)
 
@@ -172,6 +217,32 @@ public class typecheck {
 			System.out.println("failed to pass the typecheck");
 		}
 			
+	}
+	
+	// take in returncount which is the equivalence of functioncount
+	// get all of the item in function hashmap compare the functioncount
+	// to returncount, if functioncount = returncount get the return type of
+	// that function.
+	public static String functionReturnType(int returncount){
+		String[] funcnameList = getFunctionDictionary();
+		
+		// convert int to string and trim it
+		String sreturncount = ""+returncount;
+		sreturncount = sreturncount.trim();
+		
+		// loop the whole list of function name
+		for(int i = 0; i < funcnameList.length; i++){
+			// go to hashmap of function get the value using the function name key
+			// value is an array and the 2nd item in the array is the function
+			// unique id (function count) which match the returncount
+			if(mFunctionIndex.get(funcnameList[i]).get(1).equals(sreturncount)){
+				// we found the function for our return call
+				// now get the return type from the function and return it.
+				// function return type is 1st item in the arraylist
+				return mFunctionIndex.get(funcnameList[i]).get(0);
+			}
+		}
+		return null;
 	}
 	
 	public static void maincheck(String input, PatternMatching mycheck){
