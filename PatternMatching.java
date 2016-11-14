@@ -79,6 +79,33 @@ public class PatternMatching {
 	private static final Pattern varCharVer2 = Pattern.compile("^" + "char\\s[a-zA-z][a-zA-z0-9]{0,14}\\s"+ "=\\s"+"'"+"[a-zA-z]"+"'"+"[;]$");
 	private static final Pattern varBoolVer1 = Pattern.compile("^" + "bool\\s[a-zA-z][a-zA-z0-9]{0,14}"+"[;]$");
 	private static final Pattern varBoolVer2 = Pattern.compile("^" + "bool\\s[a-zA-z][a-zA-z0-9]{0,14}\\s"+ "=\\s[true|false]"+"[;]$");
+	
+	/*
+ 	int    * ip;    pointer to an integer 
+	double * dp;    pointer to a double 
+	float  * fp;    pointer to a float 
+	char   * ch     pointer to a character 
+	*/
+	private static final Pattern patternpointer = Pattern.compile("^" + "[int|double|float|char]\\s[*]\\s[a-zA-z][a-zA-z0-9]{0,14}"+"[;]$");
+	
+	// array declaration: int n [ 10 ] ; 
+	// array maximum size is 99 minimum is 0
+	private static final Pattern patternArray= Pattern.compile("^" + "[int|double|char]\\s[a-zA-z][a-zA-z0-9]{0,14}\\s"+"[\\[\\s]" + "[1-9][0-9]?\\s"+ "[\\]]\\s[;]$");
+	// array subscript string[i]
+	private static final Pattern patternArrSub = Pattern.compile("^" + "[a-zA-z][a-zA-z0-9]{0,14}"+"[\\[]" + "[0-9]"+ "[\\]]$");
+	
+	public static boolean visitPointer (String target) {
+		return patternpointer.matcher(target).find();
+	}
+	
+	public static boolean visitArray (String target) {
+		return patternArray.matcher(target).find();
+	}
+	
+	
+	public static boolean visitArrSub (String target) {
+		return patternArrSub.matcher(target).find();
+	}
 
 	//private static final Pattern variableDeclation = Pattern.compile("[var1|var2]"));
 	public static boolean visitVariableDeclaration (String target) {

@@ -26,7 +26,7 @@ public class typecheck {
 	private static HashMap<String, ArrayList<String>> mFunctionIndex;
 	
 	// hashmap that store variable info
-	// key is variable name, value is the return type
+	// key is variable name, value is the variable type
 	private static HashMap<String, String> mVariableIndex;
 	
 	// hash map that store return info
@@ -38,6 +38,11 @@ public class typecheck {
 	// function unique ID = 1 mean it is linked to return
 	// key = 1
 	private static HashMap<Integer, String> mReturnIndex;
+	
+	// hashmap that store pointer info
+	// key is pointer name, value is the pointer type
+	private static HashMap<String, String> mPointerIndex;
+	
 	
 	/*
 	public typecheck(String input){
@@ -72,8 +77,13 @@ public class typecheck {
 			input.replace("}", "");
 			input = input.trim();
 		}
+		// trim the string and remove everything un needed
+		// but keep the original input string to match the pattern
+		String ss = RemoveAllCommaNSemicolon(input);
 		// split the string into array of string
-		String[] arr = input.split("\\s+");
+		// this arr is global to all if else if statement but if i forget
+		// i can still use input and do the trimming inside the block.
+		String[] arr = ss.split("\\s+");
 		
 		// check to make sure we only have 1 main
 		// and main pass the pattern int main()
@@ -200,17 +210,59 @@ public class typecheck {
 				System.out.println("error code 9 function return type and variable data type do not match");
 			}
 		}
-		
-		// check return eror code 8 
-		// else if (return stuff)
 
-		// check a = add();
-		// function return and var type error 9
+		// pointer declaration
+		else if(mycheck.visitPointer(input)){
+			// if it match the pointer declaration then add it into the pointer hashmap
+			// along with the datatype, key for name, value for data type
+			mPointerIndex.put(arr[2], arr[0]);			
+		}
+		// array declaration
+		else if(mycheck.visitArray(input)){
+			// add to the variable hash map key = array name value = array data type
+			// example int n [ 10 ] ; arr[0] = data type, arr[1] = var name
+			mVariableIndex.put(arr[1], arr[0]);
+		}
+		// fill in 10-16
 		
-		// check if error 10
-		
-		// check while error 11
-		
+		// 17 address of 
+		// can only be applied to integers, chars, and indexed strings (string[i])
+		else if(input.contains("&")){
+			// loop throught the array to get to the item after &
+			for(int i = 0; i < arr.length; i++){
+				if(arr[i].equals("&")){
+					// look for the one next to it and see if it is a int/char/string[i]
+					// go to the variable table and search for the value(data type)
+					if(!(mVariableIndex.get(arr[i+1]).equals("int")) && 
+						!(mVariableIndex.get(arr[i+1]).equals("char")) && !isStringSub(arr[i+1])){
+						// not int / char or string[] so output error code 17
+						System.out.println("error code 17 & of something that is not int/char/string[]");
+					}
+					else{
+						System.out.println("& passed");
+					}
+				}
+			}
+		}
+		// check ^ error code 18 only be applied to integer pointers and char pointers
+		// ^ var where var is a pointer
+		else if(input.contains("^")){
+			// loop throught the array to get to the item after ^
+			for(int i = 0; i < arr.length; i++){
+				if(arr[i].equals("^")){
+					// look for the one next to it and see if it is a int/char pointer
+					// go to the pointer table and search for the value(data type)
+					if( !(mPointerIndex.get(arr[i+1]).equals("int")) && 
+						!(mPointerIndex.get(arr[i+1]).equals("char")) ){
+						// not int / char pointer so output error code 18
+						System.out.println("error code 18 ^ of something that is not int/char pointer");
+					}
+					else{
+						System.out.println("^ passed");
+					}
+				}
+			}			
+		}
 		
 		// if we get here the line failed all matching
 		else{
@@ -218,6 +270,25 @@ public class typecheck {
 		}
 			
 	}
+	
+	// is String[] return true if we have a char type []
+	// return false otherwise
+	public static boolean isStringSub (String var) {
+		PatternMatching c = new PatternMatching();
+		// match pattern String[]
+		if(c.visitArrSub(var)){
+			var = var.replace("[", " ");
+			String[] v = var.split(" ");
+			// v[0] should be the variable name
+			// now check the array hashmap to see is it data type 
+			// = to char if it is we got a string[] else return false
+			if(mVariableIndex.get(v[0]).equals("char")){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 	// take in returncount which is the equivalence of functioncount
 	// get all of the item in function hashmap compare the functioncount
