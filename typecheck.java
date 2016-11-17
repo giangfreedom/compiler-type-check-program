@@ -96,7 +96,7 @@ public class typecheck {
 			// already appear in the hashmap
 			// if it does error 3 no duplicate procedure ID allowed
 			// get key from mFunctionIndex and compare to arr[1](the func name)
-			if(isFunctionNameDuplicate(arr[1])){
+			if(mFunctionIndex.containsKey(arr[1])){
 				// we found duplicate error 3
 				System.out.println("error 3");
 			}
@@ -110,7 +110,7 @@ public class typecheck {
 		// check variable declaration pattern
 		else if(mycheck.visitVariableDeclaration(input)){
 			// check for variable duplicate
-			if(isVariableNameDuplicate(arr[1])){
+			if(mVariableIndex.containsKey(arr[1])){
 				// we found duplicate error 3
 				System.out.println("error 4 variable name duplicate");
 			}
@@ -133,7 +133,7 @@ public class typecheck {
 			String sarr[] = s.split(" ");
 			// 1st item in array is function name
 			// go into the function hashmap to check for it existence
-			if(!isFunctionNameDuplicate(sarr[0])){
+			if(!mFunctionIndex.containsKey(sarr[0])){
 				// no duplicate = no found = function is not declared before it is call
 				System.out.println("error 5 function name not found in hashmap");
 				pass = false;
@@ -141,9 +141,9 @@ public class typecheck {
 			// check for number or argument and param
 			// access the function hashmap get the value (arraylist) using
 			// the key (function name), then get the 3rd index from array list
-			// for the param number (count) compare it against number 2 (because
-			// our caculator only have function using 2 argument/param
-			else if(!(Integer.parseInt(mFunctionIndex.get(sarr[0]).get(2).trim()) == 2)){
+			// for the param number (count) compare it against size of function call arr-1 (because
+			// 1 item in the array is the function header)
+			else if(!(Integer.parseInt(mFunctionIndex.get(sarr[0]).get(2).trim()) == (sarr.length-1))){
 				System.out.println("error 6 miss match argument/param number");
 				pass = false;
 			}
@@ -187,6 +187,7 @@ public class typecheck {
 			// update returncount for next return statement
 			returncount++;
 		}
+		// var = func()
 		else if(mycheck.visitVarAssignFunc(input)){
 			// varname = functioncall(argument1, argument2);
 			// if we get this statement
@@ -197,7 +198,7 @@ public class typecheck {
 			input = RemoveAllCommaNSemicolon(input);
 			input = input.trim();
 			// we get this
-			// varname = functioncall argument1 argument2
+			// varname = function call
 			// split them into an array using split and space delimiter
 			String sVAF[] = input.split(" ");
 			// pick up the variable data type by going to the variable hashmap
@@ -379,6 +380,38 @@ public class typecheck {
 		mFunctionIndex.put(arr[1], value);		
 	}
 	
+	public static String[] getFunctionDictionary() {
+		// TO-DO: fill an array of Strings with all the keys from the hashtable.
+		// Sort the array and return it.
+		List<String> keys = new ArrayList<String>();
+		for ( String key : mFunctionIndex.keySet() ) {
+			keys.add(key);
+		}
+			  
+		String [] mystrarr = new String[keys.size()];
+		for(int j = 0; j < mystrarr.length; j++){
+			mystrarr[j] = keys.get(j);
+		}
+			  
+		return mystrarr;
+	}
+
+	public static String[] getVariableDictionary() {
+		// TO-DO: fill an array of Strings with all the keys from the hashtable.
+		// Sort the array and return it.
+		List<String> keys = new ArrayList<String>();
+		for ( String key : mVariableIndex.keySet() ) {
+			keys.add(key);
+		}
+			  
+		String [] mystrarr = new String[keys.size()];
+		for(int j = 0; j < mystrarr.length; j++){
+			mystrarr[j] = keys.get(j);
+		}
+			  
+		return mystrarr;
+	}	
+	/*
 	// loop throught the list of key(function name)  in mFunctionIndex
 	// return true if found duplicate, false if there is no duplicate
 	public static boolean isFunctionNameDuplicate(String functionName) {
@@ -399,22 +432,6 @@ public class typecheck {
 			}
 		}
 		return false;
-	}
-	
-	public static String[] getFunctionDictionary() {
-		// TO-DO: fill an array of Strings with all the keys from the hashtable.
-		// Sort the array and return it.
-		List<String> keys = new ArrayList<String>();
-		for ( String key : mFunctionIndex.keySet() ) {
-			keys.add(key);
-		}
-			  
-		String [] mystrarr = new String[keys.size()];
-		for(int j = 0; j < mystrarr.length; j++){
-			mystrarr[j] = keys.get(j);
-		}
-			  
-		return mystrarr;
 	}
 	
 	// loop throught the list of key(variable name)  in mVariableIndex
@@ -438,21 +455,5 @@ public class typecheck {
 		}
 		return false;
 	}	
-	
-	public static String[] getVariableDictionary() {
-		// TO-DO: fill an array of Strings with all the keys from the hashtable.
-		// Sort the array and return it.
-		List<String> keys = new ArrayList<String>();
-		for ( String key : mVariableIndex.keySet() ) {
-			keys.add(key);
-		}
-			  
-		String [] mystrarr = new String[keys.size()];
-		for(int j = 0; j < mystrarr.length; j++){
-			mystrarr[j] = keys.get(j);
-		}
-			  
-		return mystrarr;
-	}	
-	
+	*/
 }
