@@ -10,19 +10,23 @@ public class patternTesting {
 		String m2 = "double";
 		String m3 = "int dg1dfgd";
 		String m4 = "m1yval23kjhfghj";
-		String m5 = "func ();";
+		String m5 = "div (firstNumber, secondNumber);";
 		String m6 = "return abc;";
 		String m7 = "bool aaa1 = true;";
 		String m8 = "int * aaa;";
 		String m9 = "int aa [ 8 ];";
 		String m10 = "arr [8]";
-		/*
+		String m11 = "printf(Enter two operands: );";
+		String m12 = "scanf(%c, &operator);";
+		String m13 = "# include <stdio.h>";
+		String m14 = "void add (double num1, double num2)";
+		
 		if(mycheck.visitmain(m)){
 			System.out.println("int main() passed");
 		}
-		if(mycheck.visitfunction(m1)){
-			System.out.println("double myfunc1 passed");
-		}*/
+		if(mycheck.visitfunction(m14)){
+			System.out.println("func header passed");
+		}
 		if(mycheck.visitPrimitive(m2)){
 			System.out.println("double passed");
 		}
@@ -50,6 +54,15 @@ public class patternTesting {
 		}
 		if(mycheck.visitArrSub(m10)){
 			System.out.println("arr sub passed");
+		}
+		if(mycheck.visitPrintf(m11)){
+			System.out.println("printf passed");
+		}
+		if(mycheck.visitScanf(m12)){
+			System.out.println("scanf passed");
+		}
+		if(mycheck.visitStdio(m13)){
+			System.out.println("stdio passed");
 		}
 	}
 

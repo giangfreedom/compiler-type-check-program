@@ -45,6 +45,7 @@ public class PatternMatching {
 	private static final Pattern Returntype = Pattern.compile("(^)int($)|(^)double($)|(^)char($)|(^)float($)|(^)long($)|(^)short($)|(^)bool($)|(^)void($)");	
 
 	private static final Pattern main = Pattern.compile("int main()");
+	private static final Pattern mainret = Pattern.compile("return 0");
 	
 	private static final String patternfuncname = c + "[a-zA-z0-9]{1,14}";
 	
@@ -57,6 +58,7 @@ public class PatternMatching {
 	
 	private static final String patternfuncreturntype = ("[int|double|char|float|long|short|bool|void]");
 
+	//void add (double a, double b)
 	private static final Pattern funcheader = Pattern.compile("[int|double|char|float|long|short|bool|void]\\s[a-zA-z0-9]{1,14}\\s\\((.*?)\\)");
 	
 	private static final Pattern funcCall = Pattern.compile("[a-zA-z0-9]{1,14}\\s\\((.*?)\\);");
@@ -85,6 +87,24 @@ public class PatternMatching {
 	private static final Pattern patternArray= Pattern.compile("[int|double|char]\\s[a-zA-z][a-zA-z0-9]{0,14}\\s"+"\\[\\s" + "[1-9][0-9]?\\s"+ "\\][;]$");
 	// array subscript string[i]
 	private static final Pattern patternArrSub = Pattern.compile("[a-zA-z][a-zA-z0-9]{0,14}"+"\\s\\[" + "[0-9]{1,3}"+ "\\]$");
+	
+	private static final Pattern patternPrintf = Pattern.compile("printf\\((.*?)\\)[;]$");
+	private static final Pattern patternScanf = Pattern.compile("scanf\\((.*?)\\)[;]$");
+	private static final Pattern patternStdio = Pattern.compile("#\\sinclude\\s<stdio.h>");
+
+	
+	public static boolean visitMainret (String target) {
+		return mainret.matcher(target).find();
+	}
+	public static boolean visitPrintf (String target) {
+		return patternPrintf.matcher(target).find();
+	}
+	public static boolean visitScanf (String target) {
+		return patternScanf.matcher(target).find();
+	}
+	public static boolean visitStdio (String target) {
+		return patternStdio.matcher(target).find();
+	}
 	
 	public static boolean visitPointer (String target) {
 		return patternpointer.matcher(target).find();
@@ -160,9 +180,12 @@ public class PatternMatching {
    		 * int func1 ( )
    		 * any will work go in if block and check for the parameter
    		 */
+   		if(funcheader.matcher(target).find() == false){
+   			return false;
+   		}
    		if(funcheader.matcher(target).find()){
    			// check param by first substring them out
-   			target.replaceAll(",", "");
+   			target = target.replaceAll(",", "");
    			String paramlist = target.substring(target.indexOf("(")+1,target.indexOf(")"));
    			paramlist = paramlist.trim();
    			// case int func1 ( )

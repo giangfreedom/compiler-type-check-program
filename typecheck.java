@@ -23,11 +23,11 @@ public class typecheck {
 	// 4th param return type, 5th param name
 	// 6th param return type, 7th param name
 	// calculator add/minus/mul/ div functions only have 2 param.
-	private static HashMap<String, ArrayList<String>> mFunctionIndex;
+	private static HashMap<String, ArrayList<String>> mFunctionIndex = new HashMap<String, ArrayList<String>>();
 	
 	// hashmap that store variable info
 	// key is variable name, value is the variable type
-	private static HashMap<String, String> mVariableIndex;
+	private static HashMap<String, String> mVariableIndex = new HashMap<String, String>();
 	
 	// hash map that store return info
 	// key is the number of return start at 1 increase by 1 
@@ -37,7 +37,7 @@ public class typecheck {
 	// the key (number) match the function unique ID,
 	// function unique ID = 1 mean it is linked to return
 	// key = 1
-	private static HashMap<Integer, String> mReturnIndex;
+	private static HashMap<Integer, String> mReturnIndex = new HashMap<Integer, String>();
 	
 	// hashmap that store pointer info
 	// key is pointer name, value is the pointer type
@@ -51,7 +51,7 @@ public class typecheck {
 	
 	// remove all comma, semi colon
 	public static String RemoveAllCommaNSemicolon(String in){
-		in = in.replace(",", " ");
+		in = in.replace(",", "");
 		in = in.replace(";", "");
 		in = in.trim();
 		return in;
@@ -59,7 +59,7 @@ public class typecheck {
 
 	public static void check(String input){
 		PatternMatching mycheck = new PatternMatching();
-		input = RemoveAllCommaNSemicolon(input);
+		//input = RemoveAllCommaNSemicolon(input);
 		// keep track of declared variable and function
 		// so when we get an expression of the form
 		// assignment we can check to see if
@@ -69,12 +69,12 @@ public class typecheck {
 		//check number of open and close curly brace
 		if(input.contains("{")){
 			openbracecount++;
-			input.replace("{", "");
+			input = input.replace("{", "");
 			input = input.trim();
 		}
 		if(input.contains("}")){
 			closebracecount++;
-			input.replace("}", "");
+			input = input.replace("}", "");
 			input = input.trim();
 		}
 		// trim the string and remove everything un needed
@@ -83,12 +83,43 @@ public class typecheck {
 		// split the string into array of string
 		// this arr is global to all if else if statement but if i forget
 		// i can still use input and do the trimming inside the block.
-		String[] arr = ss.split("\\s+");
-		
+		String[] arr = ss.split(" ");
+		if(input.equals("") || input.isEmpty() || (input == null)){
+			System.out.println("empty after remove }");
+		}
 		// check to make sure we only have 1 main
 		// and main pass the pattern int main()
-		if(input.contains("main()")){
+		else if(input.contains("main()")){
 			maincheck(input, mycheck);
+		}
+		else if(mycheck.visitMainret(input)){
+			System.out.println("return 0 for main");
+		}
+		else if(input.contains("printf")){
+			String newin = input.replaceAll("\"", "");
+			if(!(mycheck.visitPrintf(newin))){
+				System.out.println("printf error");
+			}
+			else{
+				System.out.println("printf passed");
+			}
+		}
+		else if(input.contains("scanf")){
+			String newin = input.replaceAll("\"", "");
+			if(!(mycheck.visitScanf(newin))){
+				System.out.println("scanf error");
+			}
+			else{
+				System.out.println("scanf passed");
+			}
+		}
+		else if(input.contains("include")){
+			if(!(mycheck.visitStdio(input))){
+				System.out.println("stdio error");
+			}
+			else{
+				System.out.println("stdio passed");
+			}
 		}
 		// check function pattern
 		else if(mycheck.visitfunction(input)){
@@ -98,7 +129,7 @@ public class typecheck {
 			// get key from mFunctionIndex and compare to arr[1](the func name)
 			if(mFunctionIndex.containsKey(arr[1])){
 				// we found duplicate error 3
-				System.out.println("error 3");
+				System.out.println("error 3 function duplicate name found");
 			}
 			// no duplicated name found
 			// populate the function hashmap with the function information
@@ -126,10 +157,10 @@ public class typecheck {
 		else if(mycheck.visitFunctionCall(input)){
 			boolean pass = true;
 			String s = input;
-			int j = 4;
+			int j = 3;
 			s = RemoveAllCommaNSemicolon(s);
-			s = s.replaceAll("(", " ");
-			s = s.replaceAll(")", "");
+			s = s.replaceAll("\\(", "");
+			s = s.replaceAll("\\)", "");
 			String sarr[] = s.split(" ");
 			// 1st item in array is function name
 			// go into the function hashmap to check for it existence
@@ -192,8 +223,8 @@ public class typecheck {
 			// varname = functioncall(argument1, argument2);
 			// if we get this statement
 			// first we replace paranthesis with space then remove ; and ,
-			input.replaceAll("(", " ");
-			input.replaceAll(")", " ");
+			input = input.replaceAll("(", " ");
+			input = input.replaceAll(")", " ");
 			// remove comma and semicolon
 			input = RemoveAllCommaNSemicolon(input);
 			input = input.trim();
@@ -341,6 +372,9 @@ public class typecheck {
 		// param number(count), 1st param return type, 1st param name, 
 		// 2nd param return type, 2nd param name etc...
 		// split the string into array of string using space between word
+		input = RemoveAllCommaNSemicolon(input);
+		input = input.replaceAll("\\(", "");
+		input = input.replaceAll("\\)", "");
 		String[] arr = input.split("\\s+");
 		ArrayList<String> value = new ArrayList<String>();
 		
@@ -354,26 +388,19 @@ public class typecheck {
 		functioncount++;
 		
 		// add number of parameter (param count of the function)
-		// the size of the arr[] - 4 (return type, name, open paren, close paren)
-		value.add(""+((arr.length - 4)/2));
+		// the size of the arr[] - 2 (return type, name)
+		value.add(""+((arr.length - 2)/2));
 		
 		// we have 1 or more param
-		if(!((arr.length - 4)/2 == 0)){
+		int x = 2;
+		if(!((arr.length - 2)/2 == 0)){
 			// loop through the arr[] add all param
 			// return type and name into the value arraylist
-			for (int i = 0; i < arr.length; i++){
-				if(arr[i].equalsIgnoreCase("(")){
-					// add param return type and name intp value list
-					for(int j = i+1; j < arr.length; j= j+2){
-						if(!arr[j].equalsIgnoreCase(")")){
-							// param return type
-							value.add(arr[j]);
-							// param name
-							value.add(arr[j+1]);
-						}
-					}
-					break;
-				}
+			for (int i = 2; i < arr.length; i = i+2){
+				// param return type
+				value.add(arr[i]);
+				// param name
+				value.add(arr[i+1]);
 			}
 		}
 		
@@ -411,7 +438,7 @@ public class typecheck {
 			  
 		return mystrarr;
 	}	
-	/*
+	
 	// loop throught the list of key(function name)  in mFunctionIndex
 	// return true if found duplicate, false if there is no duplicate
 	public static boolean isFunctionNameDuplicate(String functionName) {
@@ -439,7 +466,7 @@ public class typecheck {
 	public static boolean isVariableNameDuplicate(String variableName) {
 		// we have nothing in the hashmap mean no variable was added at all
 		// no duplicate possible
-		if(mVariableIndex.isEmpty() == true){
+		if(mVariableIndex == null || mVariableIndex.isEmpty() == true){
 			return false;
 		}
 		// we have at least 1 variable added
@@ -455,5 +482,5 @@ public class typecheck {
 		}
 		return false;
 	}	
-	*/
+	
 }
