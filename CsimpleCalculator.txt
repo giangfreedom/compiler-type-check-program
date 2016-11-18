@@ -1,0 +1,45 @@
+# include <stdio.h>
+
+void add (double num1, double num2){
+    printf("O resultado e: %d", num1+num2);
+}
+
+void sub (double num1, double num2){
+    printf("O resultado e: %d", num1-num2);
+}
+
+void mul (double num1, double num2){
+    printf("O resultado e: %d", num1*num2);
+}
+
+void div (double num1, double num1){
+    printf("O resultado e: %d", num1/num2);
+}
+
+int main() {
+
+    char operator;
+    double firstNumber;
+    double secondNumber;
+
+    printf("Enter an operator (+, -, *,): ");
+    scanf("%c", &operator);
+
+    printf("Enter two operands: ");
+    scanf("%lf %lf",&firstNumber, &secondNumber);
+
+    if ( operator == '+' ) {
+        add (firstNumber, secondNumber);
+    }
+    else if ( operator == '-' ) {
+        sub (firstNumber, secondNumber);
+    }
+    else if ( operator == '*' ) {
+        mul (firstNumber, secondNumber);
+    }
+    else if ( operator == '/' ) {
+        div (firstNumber, secondNumber);
+    }
+    
+    return 0;
+}
