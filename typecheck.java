@@ -121,37 +121,18 @@ public class typecheck {
 				System.out.println("stdio passed");
 			}
 		}
-		// check function pattern
-		else if(mycheck.visitfunction(input)){
-			// check to see if the function name (procedure ID)
-			// already appear in the hashmap
-			// if it does error 3 no duplicate procedure ID allowed
-			// get key from mFunctionIndex and compare to arr[1](the func name)
-			if(mFunctionIndex.containsKey(arr[1])){
-				// we found duplicate error 3
-				System.out.println("error 3 function duplicate name found");
-			}
-			// no duplicated name found
-			// populate the function hashmap with the function information
-			else{
-				functionPopulate(input);
-				System.out.println("function header passed");
-			}
-		}
-		// check variable declaration pattern
+		// skipping if detect var/func/ptr/arr decl
 		else if(mycheck.visitVariableDeclaration(input)){
-			// check for variable duplicate
-			if(mVariableIndex.containsKey(arr[1])){
-				// we found duplicate error 3
-				System.out.println("error 4 variable name duplicate");
-			}
-			else{
-				// get the variable name and data type
-				// save them in the variable hashmap
-				// arr[1] var name, arr[0] var type
-				mVariableIndex.put(arr[1], arr[0]);
-				System.out.println("variable declaration passed");
-			}
+			System.out.println("skip var declaration");
+		}
+		else if(mycheck.visitPointer(input)){
+			System.out.println("skip ptr declaration");
+		}
+		else if(mycheck.visitArray(input)){
+			System.out.println("skip array declaration");
+		}
+		else if(mycheck.visitfunction(input)){
+			System.out.println("skip function header");
 		}
 		// check function call
 		else if(mycheck.visitFunctionCall(input)){
@@ -243,18 +224,6 @@ public class typecheck {
 			}
 		}
 
-		// pointer declaration
-		else if(mycheck.visitPointer(input)){
-			// if it match the pointer declaration then add it into the pointer hashmap
-			// along with the datatype, key for name, value for data type
-			mPointerIndex.put(arr[2], arr[0]);			
-		}
-		// array declaration
-		else if(mycheck.visitArray(input)){
-			// add to the variable hash map key = array name value = array data type
-			// example int n [ 10 ] ; arr[0] = data type, arr[1] = var name
-			mVariableIndex.put(arr[1], arr[0]);
-		}
 		// fill in 10-16
 		
 		// 17 address of 
@@ -362,6 +331,10 @@ public class typecheck {
 		else{
 			System.out.println("main passed");
 		}		
+	}
+	
+	public static boolean braceCount(){
+		return (openbracecount == closebracecount);
 	}
 	
 	public static void functionPopulate(String input){
@@ -483,4 +456,97 @@ public class typecheck {
 		return false;
 	}	
 	
+	public static void Declaration (String input) {
+		PatternMatching mycheck = new PatternMatching();
+		String ss = RemoveAllCommaNSemicolon(input);
+		// split the string into array of string
+		// this arr is global to all if else if statement but if i forget
+		// i can still use input and do the trimming inside the block.
+		String[] arr = ss.split(" ");
+		
+		//check number of open and close curly brace
+		if(input.contains("{")){
+			openbracecount++;
+			input = input.replace("{", "");
+			input = input.trim();
+		}
+		if(input.contains("}")){
+			closebracecount++;
+			input = input.replace("}", "");
+			input = input.trim();
+		}
+		if(input.equals("") || input.isEmpty() || (input == null)){
+			System.out.println("empty after remove }");
+		}
+		// check common form of var decl
+		if(mycheck.visitCommonVar(input)){
+			// check specific form variable declaration pattern
+			if(mycheck.visitVariableDeclaration(input)){
+				// check for variable duplicate
+				if(mVariableIndex.containsKey(arr[1])){
+					// we found duplicate error 3
+					System.out.println("error 4 variable name duplicate");
+				}
+				else{
+					// get the variable name and data type
+					// save them in the variable hashmap
+					// arr[1] var name, arr[0] var type
+					mVariableIndex.put(arr[1], arr[0]);
+					System.out.println("variable declaration passed");
+				}
+			}
+			else{
+				System.out.println("error variable declaration ");
+			}
+		}
+		// check common form of ptr
+		else if(mycheck.visitCommonPtr(input)){
+			// specific form of pointer declaration
+			if(mycheck.visitPointer(input)){
+				// if it match the pointer declaration then add it into the pointer hashmap
+				// along with the datatype, key for name, value for data type
+				mPointerIndex.put(arr[2], arr[0]);			
+			}
+			else{
+				System.out.println("error ptr declaration ");
+			}
+		}
+		// check common form of array decl
+		else if(mycheck.visitCommonArr(input)){
+			// specific form of array declaration
+			if(mycheck.visitArray(input)){
+				// add to the variable hash map key = array name value = array data type
+				// example int n [ 10 ] ; arr[0] = data type, arr[1] = var name
+				mVariableIndex.put(arr[1], arr[0]+"Arr");
+			}
+			else{
+				System.out.println("error Array declaration ");
+			}
+		}
+		// common func header
+		else if(mycheck.visitcommonfuncheader(input)){
+			// specific func header check
+			// check function pattern
+			if(mycheck.visitfunction(input)){
+				// check to see if the function name (procedure ID)
+				// already appear in the hashmap
+				// if it does error 3 no duplicate procedure ID allowed
+				// get key from mFunctionIndex and compare to arr[1](the func name)
+				if(mFunctionIndex.containsKey(arr[1])){
+					// we found duplicate error 3
+					System.out.println("error 3 function duplicate name found");
+				}
+				// no duplicated name found
+				// populate the function hashmap with the function information
+				else{
+					functionPopulate(input);
+					System.out.println("function header passed");
+				}
+			}
+			else{
+				System.out.println("error Function declaration ");
+			}
+		}
+		
+	}	
 }

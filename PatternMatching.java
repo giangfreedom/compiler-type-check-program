@@ -60,6 +60,7 @@ public class PatternMatching {
 
 	//void add (double a, double b)
 	private static final Pattern funcheader = Pattern.compile("[int|double|char|float|long|short|bool|void]\\s[a-zA-z0-9]{1,14}\\s\\((.*?)\\)");
+	private static final Pattern commonfuncheader = Pattern.compile("(\\w+)\\s(\\w+)\\s\\((.*?)\\)");
 	
 	private static final Pattern funcCall = Pattern.compile("[a-zA-z0-9]{1,14}\\s\\((.*?)\\);");
 	
@@ -91,7 +92,26 @@ public class PatternMatching {
 	private static final Pattern patternPrintf = Pattern.compile("printf\\((.*?)\\)[;]$");
 	private static final Pattern patternScanf = Pattern.compile("scanf\\((.*?)\\)[;]$");
 	private static final Pattern patternStdio = Pattern.compile("#\\sinclude\\s<stdio.h>");
+	
+	// common form of var/arr/ptr declaration
+	private static final Pattern CommonVar = Pattern.compile("^?(\\w+)\\s^?(\\w+);$");
+	private static final Pattern CommonVarWithInitialization = Pattern.compile("^?(\\w+)\\s^?(\\w+)\\s=\\s(.*?);$");
+	private static final Pattern CommonPtr = Pattern.compile("^?(\\w+)\\s?[*]\\s?(\\w+);$");
+	private static final Pattern CommonArr = Pattern.compile("^?(\\w+)\\s(\\w+)\\s?\\[(.*?)];$");
+	//---------------------------------------
 
+	public static boolean visitCommonVar (String target) {
+		return (CommonVar.matcher(target).find() || CommonVarWithInitialization.matcher(target).find());
+	}
+	public static boolean visitCommonPtr (String target) {
+		return CommonPtr.matcher(target).find();
+	}
+	public static boolean visitCommonArr (String target) {
+		return CommonArr.matcher(target).find();
+	}
+	public static boolean visitcommonfuncheader (String target) {
+		return commonfuncheader.matcher(target).find();
+	}
 	
 	public static boolean visitMainret (String target) {
 		return mainret.matcher(target).find();
