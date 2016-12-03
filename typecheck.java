@@ -15,6 +15,8 @@ public class typecheck {
 	private static int functioncount = 0;
 	private static int returncount = 0;
 	
+	private static PatternMatching mycheck = new PatternMatching();
+	
 	// hash map that store the function info
 	// key is function name, value is an arraylist
 	// 1st item in arraylist is function return type
@@ -58,7 +60,6 @@ public class typecheck {
 	}
 
 	public static void check(String input){
-		PatternMatching mycheck = new PatternMatching();
 		//input = RemoveAllCommaNSemicolon(input);
 		// keep track of declared variable and function
 		// so when we get an expression of the form
@@ -456,8 +457,15 @@ public class typecheck {
 		return false;
 	}	
 	
+	/*
+	 * this function check for the declaration of 
+	 * 1) a variable
+	 * 2) a pointer
+	 * 3) array
+	 * 4) function header
+	 * INPUT: a string (a single line from the input program)
+	 */
 	public static void Declaration (String input) {
-		PatternMatching mycheck = new PatternMatching();
 		String ss = RemoveAllCommaNSemicolon(input);
 		// split the string into array of string
 		// this arr is global to all if else if statement but if i forget
@@ -475,13 +483,16 @@ public class typecheck {
 			input = input.replace("}", "");
 			input = input.trim();
 		}
+		// check empty input
 		if(input.equals("") || input.isEmpty() || (input == null)){
 			System.out.println("empty after remove }");
 		}
 		// check common form of var decl
-		if(mycheck.visitCommonVar(input)){
+		if(PatternMatching.visitCommonVar(input) && 
+				(input.contains("int") || input.contains("char") || input.contains("double") ||
+				input.contains("float") || input.contains("long") || input.contains("short"))){
 			// check specific form variable declaration pattern
-			if(mycheck.visitVariableDeclaration(input)){
+			if(PatternMatching.visitVariableDeclaration(input)){
 				// check for variable duplicate
 				if(mVariableIndex.containsKey(arr[1])){
 					// we found duplicate error 3
@@ -500,9 +511,12 @@ public class typecheck {
 			}
 		}
 		// check common form of ptr
-		else if(mycheck.visitCommonPtr(input)){
+		// NOTE here i assume we only have int,char,double,float ptr that why i do not
+		// check for long and short data type
+		else if(PatternMatching.visitCommonPtr(input) && 
+				(input.contains("int") || input.contains("char") || input.contains("double") || input.contains("float"))){
 			// specific form of pointer declaration
-			if(mycheck.visitPointer(input)){
+			if(PatternMatching.visitPointer(input)){
 				// if it match the pointer declaration then add it into the pointer hashmap
 				// along with the datatype, key for name, value for data type
 				mPointerIndex.put(arr[2], arr[0]);			
@@ -512,9 +526,9 @@ public class typecheck {
 			}
 		}
 		// check common form of array decl
-		else if(mycheck.visitCommonArr(input)){
+		else if(PatternMatching.visitCommonArr(input)){
 			// specific form of array declaration
-			if(mycheck.visitArray(input)){
+			if(PatternMatching.visitArray(input)){
 				// add to the variable hash map key = array name value = array data type
 				// example int n [ 10 ] ; arr[0] = data type, arr[1] = var name
 				mVariableIndex.put(arr[1], arr[0]+"Arr");
@@ -524,10 +538,12 @@ public class typecheck {
 			}
 		}
 		// common func header
-		else if(mycheck.visitcommonfuncheader(input)){
+		else if(PatternMatching.visitcommonfuncheader(input) && !(input.contains("printf")) && 
+				(input.contains("int") || input.contains("char") || input.contains("double") ||
+				input.contains("float") || input.contains("long") || input.contains("short") || input.contains("void"))){
 			// specific func header check
 			// check function pattern
-			if(mycheck.visitfunction(input)){
+			if(PatternMatching.visitfunction(input)){
 				// check to see if the function name (procedure ID)
 				// already appear in the hashmap
 				// if it does error 3 no duplicate procedure ID allowed
