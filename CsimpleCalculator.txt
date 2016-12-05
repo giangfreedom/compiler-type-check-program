@@ -29,6 +29,11 @@ int main() {
     int * myintptr;
     int myarr [ 5 ];
 
+    intt testintt;
+    ddouble * testptr;
+    iint teestarr [ 5 ];
+    charr testchar;
+
     printf("Enter an operator (+, -, *,): ");
     scanf("%c", &operator);
 
