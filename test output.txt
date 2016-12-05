@@ -1,0 +1,153 @@
+ignore line
+ignore line
+ignore line
+ignore line
+ignore line
+ignore line
+ignore line
+ignore line
+ignore line
+ignore line
+# include <stdio.h>
+not declaration 
+void add (double num1, double num2){
+function header declaration passed
+printf("O resultado e: %d", num1+num2);
+not declaration 
+}
+not declaration 
+void sub (double num1, double num2){
+function header declaration passed
+printf("O resultado e: %d", num1-num2);
+not declaration 
+}
+not declaration 
+void mul (double num1, double num2){
+function header declaration passed
+printf("O resultado e: %d", num1*num2);
+not declaration 
+}
+not declaration 
+void div (double num1, double num1){
+function header declaration passed
+printf("O resultado e: %d", num1/num2);
+not declaration 
+}
+not declaration 
+int main() {
+not declaration 
+char operator;
+variable declaration passed
+char mychar = 'a';
+variable declaration passed
+double firstNumber;
+variable declaration passed
+int secondNumber;
+variable declaration passed
+double thirdNumber = 7;
+variable declaration passed
+int fourNumber = 9;
+variable declaration passed
+bool check;
+variable declaration passed
+bool my = true;
+variable declaration passed
+int * myintptr;
+ptr declaration passed
+int myarr [ 5 ];
+array declaration passed
+printf("Enter an operator (+, -, *,): ");
+not declaration 
+scanf("%c", &operator);
+not declaration 
+printf("Enter two operands: ");
+not declaration 
+scanf("%lf %lf",&firstNumber, &secondNumber);
+not declaration 
+if ( operator == '+' ) {
+not declaration 
+add (firstNumber, secondNumber);
+not declaration 
+}
+not declaration 
+else if ( operator == '-' ) {
+not declaration 
+sub (firstNumber, secondNumber);
+not declaration 
+}
+not declaration 
+else if ( operator == '*' ) {
+not declaration 
+mul (firstNumber, secondNumber);
+not declaration 
+}
+not declaration 
+else if ( operator == '/' ) {
+not declaration 
+div (firstNumber, secondNumber);
+not declaration 
+}
+not declaration 
+return 0;
+not declaration 
+}
+not declaration 
+END OF DECLARATION CHECK
+# include <stdio.h>
+stdio passed
+printf("O resultado e: %d", num1+num2);
+printf passed
+}
+ignore line
+printf("O resultado e: %d", num1-num2);
+printf passed
+}
+ignore line
+printf("O resultado e: %d", num1*num2);
+printf passed
+}
+ignore line
+printf("O resultado e: %d", num1/num2);
+printf passed
+}
+ignore line
+int main() {
+main passed
+printf("Enter an operator (+, -, *,): ");
+printf passed
+scanf("%c", &operator);
+scanf passed
+printf("Enter two operands: ");
+printf passed
+scanf("%lf %lf",&firstNumber, &secondNumber);
+scanf passed
+if ( operator == '+' ) {
+failed to pass the typecheck
+add (firstNumber, secondNumber);
+error 7 data type miss match argument/param
+}
+ignore line
+else if ( operator == '-' ) {
+failed to pass the typecheck
+sub (firstNumber, secondNumber);
+error 7 data type miss match argument/param
+}
+ignore line
+else if ( operator == '*' ) {
+failed to pass the typecheck
+mul (firstNumber, secondNumber);
+error 7 data type miss match argument/param
+}
+ignore line
+else if ( operator == '/' ) {
+failed to pass the typecheck
+div (firstNumber, secondNumber);
+error 7 data type miss match argument/param
+}
+ignore line
+return 0;
+return 0 for main
+}
+ignore line
+open brace count is : 9
+close brace count is : 9
