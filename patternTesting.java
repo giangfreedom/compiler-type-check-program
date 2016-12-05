@@ -20,6 +20,8 @@ public class patternTesting {
 		String m12 = "scanf(%c, &operator);";
 		String m13 = "# include <stdio.h>";
 		String m14 = "void add (double num1, double num2)";
+		String m15 = "else if ( operator == '/' )";
+		String m16 = "bool check = true;";
 		
 		if(mycheck.visitmain(m)){
 			System.out.println("int main() passed");
@@ -63,6 +65,12 @@ public class patternTesting {
 		}
 		if(mycheck.visitStdio(m13)){
 			System.out.println("stdio passed");
+		}
+		if(mycheck.visitcommonfuncheader(m15)){
+			System.out.println("common function header passed");
+		}
+		if(mycheck.visitCommonVar(m16)){
+			System.out.println("common var passed");
 		}
 	}
 

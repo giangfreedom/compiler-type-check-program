@@ -31,19 +31,9 @@ public class typecheck {
 	// key is variable name, value is the variable type
 	private static HashMap<String, String> mVariableIndex = new HashMap<String, String>();
 	
-	// hash map that store return info
-	// key is the number of return start at 1 increase by 1 
-	// for every return we encounter, value is the variable
-	// name that we are returning, use it to access the
-	// variable hashmap to obtain the type of the variable.
-	// the key (number) match the function unique ID,
-	// function unique ID = 1 mean it is linked to return
-	// key = 1
-	private static HashMap<Integer, String> mReturnIndex = new HashMap<Integer, String>();
-	
 	// hashmap that store pointer info
 	// key is pointer name, value is the pointer type
-	private static HashMap<String, String> mPointerIndex;
+	private static HashMap<String, String> mPointerIndex = new HashMap<String, String>();
 	
 	
 	/*
@@ -69,12 +59,10 @@ public class typecheck {
 		
 		//check number of open and close curly brace
 		if(input.contains("{")){
-			openbracecount++;
 			input = input.replace("{", "");
 			input = input.trim();
 		}
 		if(input.contains("}")){
-			closebracecount++;
 			input = input.replace("}", "");
 			input = input.trim();
 		}
@@ -85,12 +73,9 @@ public class typecheck {
 		// this arr is global to all if else if statement but if i forget
 		// i can still use input and do the trimming inside the block.
 		String[] arr = ss.split(" ");
-		if(input.equals("") || input.isEmpty() || (input == null)){
-			System.out.println("empty after remove }");
-		}
 		// check to make sure we only have 1 main
 		// and main pass the pattern int main()
-		else if(input.contains("main()")){
+		if(input.contains("main()")){
 			maincheck(input, mycheck);
 		}
 		else if(mycheck.visitMainret(input)){
@@ -265,6 +250,9 @@ public class typecheck {
 				}
 			}			
 		}
+		else if(input.isEmpty() || (input.equals(null)) || (input.equals("EOF"))){
+			System.out.println("ignore line");
+		}
 		
 		// if we get here the line failed all matching
 		else{
@@ -335,6 +323,8 @@ public class typecheck {
 	}
 	
 	public static boolean braceCount(){
+		System.out.println("open brace count is : "+ openbracecount);
+		System.out.println("close brace count is : "+ closebracecount);
 		return (openbracecount == closebracecount);
 	}
 	
@@ -464,8 +454,10 @@ public class typecheck {
 	 * 3) array
 	 * 4) function header
 	 * INPUT: a string (a single line from the input program)
+	 * return true if the input pass the general form of declaration checking
+	 * return false if it does not.
 	 */
-	public static void Declaration (String input) {
+	public static boolean Declaration (String input) {
 		String ss = RemoveAllCommaNSemicolon(input);
 		// split the string into array of string
 		// this arr is global to all if else if statement but if i forget
@@ -483,14 +475,10 @@ public class typecheck {
 			input = input.replace("}", "");
 			input = input.trim();
 		}
-		// check empty input
-		if(input.equals("") || input.isEmpty() || (input == null)){
-			System.out.println("empty after remove }");
-		}
 		// check common form of var decl
 		if(PatternMatching.visitCommonVar(input) && 
 				(input.contains("int") || input.contains("char") || input.contains("double") ||
-				input.contains("float") || input.contains("long") || input.contains("short"))){
+				input.contains("float") || input.contains("long") || input.contains("short") || input.contains("bool"))){
 			// check specific form variable declaration pattern
 			if(PatternMatching.visitVariableDeclaration(input)){
 				// check for variable duplicate
@@ -509,6 +497,8 @@ public class typecheck {
 			else{
 				System.out.println("error variable declaration ");
 			}
+			// return true if the statement pass the general form even if it fail the detail form.
+			return true;
 		}
 		// check common form of ptr
 		// NOTE here i assume we only have int,char,double,float ptr that why i do not
@@ -519,11 +509,14 @@ public class typecheck {
 			if(PatternMatching.visitPointer(input)){
 				// if it match the pointer declaration then add it into the pointer hashmap
 				// along with the datatype, key for name, value for data type
-				mPointerIndex.put(arr[2], arr[0]);			
+				mPointerIndex.put(arr[2], arr[0]);
+				System.out.println("ptr declaration passed");
 			}
 			else{
 				System.out.println("error ptr declaration ");
 			}
+			// return true if the statement pass the general form even if it fail the detail form.
+			return true;
 		}
 		// check common form of array decl
 		else if(PatternMatching.visitCommonArr(input)){
@@ -532,10 +525,13 @@ public class typecheck {
 				// add to the variable hash map key = array name value = array data type
 				// example int n [ 10 ] ; arr[0] = data type, arr[1] = var name
 				mVariableIndex.put(arr[1], arr[0]+"Arr");
+				System.out.println("array declaration passed");
 			}
 			else{
 				System.out.println("error Array declaration ");
 			}
+			// return true if the statement pass the general form even if it fail the detail form.
+			return true;
 		}
 		// common func header
 		else if(PatternMatching.visitcommonfuncheader(input) && !(input.contains("printf")) && 
@@ -556,13 +552,19 @@ public class typecheck {
 				// populate the function hashmap with the function information
 				else{
 					functionPopulate(input);
-					System.out.println("function header passed");
+					System.out.println("function header declaration passed");
 				}
 			}
 			else{
 				System.out.println("error Function declaration ");
 			}
+			// return true if the statement pass the general form even if it fail the detail form.
+			return true;
 		}
 		
+		// default return false if it do not pass any of the 4 general declaration form
+		// it is not declaration.
+		System.out.println("not declaration ");
+		return false;		
 	}	
 }
