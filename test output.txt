@@ -8,6 +8,7 @@ ignore line
 ignore line
 ignore line
 ignore line
+ignore line
 # include <stdio.h>
 not declaration 
 void add (double num1, double num2){
@@ -56,6 +57,14 @@ int * myintptr;
 ptr declaration passed
 int myarr [ 5 ];
 array declaration passed
+intt testintt;
+not declaration 
+ddouble * testptr;
+not declaration 
+iint teestarr [ 5 ];
+not declaration 
+charr testchar;
+not declaration 
 printf("Enter an operator (+, -, *,): ");
 not declaration 
 scanf("%c", &operator);
@@ -113,6 +122,14 @@ printf passed
 ignore line
 int main() {
 main passed
+intt testintt;
+skip var declaration
+ddouble * testptr;
+skip ptr declaration
+iint teestarr [ 5 ];
+skip array declaration
+charr testchar;
+skip var declaration
 printf("Enter an operator (+, -, *,): ");
 printf passed
 scanf("%c", &operator);
