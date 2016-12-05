@@ -7,7 +7,7 @@ public class patternTesting {
 		PatternMatching mycheck = new PatternMatching();
 		String m = "int main()";
 		String m1 = "double myfunc1 (int myvalue1)";
-		String m2 = "double";
+		String m2 = "ddouble";
 		String m3 = "int dg1dfgd";
 		String m4 = "m1yval23kjhfghj";
 		String m5 = "div (firstNumber, secondNumber);";

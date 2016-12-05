@@ -8,13 +8,12 @@ import java.util.Scanner;
 public class main {
 
 	public static void main(String[] args) {
-		Scanner in;
-		Scanner in1;
+		Scanner in = null;
 		typecheck mycheck = new typecheck();
 		ArrayList<String> programString = new ArrayList<String>();
 		ArrayList<String> SemeticprogramString = new ArrayList<String>();
 		try {
-			in = new Scanner(new FileReader("C:\\Users\\SuperAdmin\\Desktop\\fortranproject\\simpleTypeCheck\\CsimpleCalculator.txt"));
+			in = new Scanner(new FileReader("C://Users//giang//Desktop//simpleTypeCheck\\CsimpleCalculator.txt"));
 			// pick up all string in program and fill the arraylist withit.
 			while(in.hasNextLine()){
 				String input = in.nextLine();
@@ -53,6 +52,7 @@ public class main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		in.close();
 	}
 
 }

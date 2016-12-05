@@ -476,9 +476,7 @@ public class typecheck {
 			input = input.trim();
 		}
 		// check common form of var decl
-		if(PatternMatching.visitCommonVar(input) && 
-				(input.contains("int") || input.contains("char") || input.contains("double") ||
-				input.contains("float") || input.contains("long") || input.contains("short") || input.contains("bool"))){
+		if(PatternMatching.visitCommonVar(input) && PatternMatching.visitPrimitive(arr[0])){
 			// check specific form variable declaration pattern
 			if(PatternMatching.visitVariableDeclaration(input)){
 				// check for variable duplicate
@@ -503,8 +501,7 @@ public class typecheck {
 		// check common form of ptr
 		// NOTE here i assume we only have int,char,double,float ptr that why i do not
 		// check for long and short data type
-		else if(PatternMatching.visitCommonPtr(input) && 
-				(input.contains("int") || input.contains("char") || input.contains("double") || input.contains("float"))){
+		else if(PatternMatching.visitCommonPtr(input) && PatternMatching.visitPrimitive(arr[0])){
 			// specific form of pointer declaration
 			if(PatternMatching.visitPointer(input)){
 				// if it match the pointer declaration then add it into the pointer hashmap
@@ -519,7 +516,7 @@ public class typecheck {
 			return true;
 		}
 		// check common form of array decl
-		else if(PatternMatching.visitCommonArr(input)){
+		else if(PatternMatching.visitCommonArr(input) && PatternMatching.visitPrimitive(arr[0])){
 			// specific form of array declaration
 			if(PatternMatching.visitArray(input)){
 				// add to the variable hash map key = array name value = array data type
@@ -534,9 +531,7 @@ public class typecheck {
 			return true;
 		}
 		// common func header
-		else if(PatternMatching.visitcommonfuncheader(input) && !(input.contains("printf")) && 
-				(input.contains("int") || input.contains("char") || input.contains("double") ||
-				input.contains("float") || input.contains("long") || input.contains("short") || input.contains("void"))){
+		else if(PatternMatching.visitcommonfuncheader(input) && PatternMatching.visitReturnType(arr[0])){
 			// specific func header check
 			// check function pattern
 			if(PatternMatching.visitfunction(input)){

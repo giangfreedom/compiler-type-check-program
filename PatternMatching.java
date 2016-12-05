@@ -39,7 +39,7 @@ public class PatternMatching {
 	//private static final String patternPrimitive = ("int|double|char|float|long|short|bool");
 	
 	private static final Pattern primitive = Pattern.compile("(^)int($)|(^)double($)|(^)char($)|(^)float($)|(^)long($)|(^)short($)|(^)bool($)");
-	   
+	
 	private static final String patternPrimitiveArray = ("(^)int[]($)|(^)double[]($)|(^)char[]($)|(^)float[]($)|(^)long[]($)|(^)short[]($)");
 	   
 	private static final Pattern Returntype = Pattern.compile("(^)int($)|(^)double($)|(^)char($)|(^)float($)|(^)long($)|(^)short($)|(^)bool($)|(^)void($)");	
