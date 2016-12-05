@@ -19,8 +19,15 @@ void div (double num1, double num1){
 int main() {
 
     char operator;
+    char mychar = 'a';
     double firstNumber;
-    double secondNumber;
+    int secondNumber;
+    double thirdNumber = 7;
+    int fourNumber = 9;
+    bool check;
+    bool my = true;
+    int * myintptr;
+    int myarr [ 5 ];
 
     printf("Enter an operator (+, -, *,): ");
     scanf("%c", &operator);
