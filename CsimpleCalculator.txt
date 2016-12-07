@@ -8,11 +8,11 @@ void sub (double num1, double num2){
     printf("O resultado e: %d", num1-num2);
 }
 
-void mul (double num1, double num2){
+void mul (double num1, int num2){
     printf("O resultado e: %d", num1*num2);
 }
 
-void div (double num1, double num1){
+void div (double num1, int num1){
     printf("O resultado e: %d", num1/num2);
 }
 
@@ -28,11 +28,6 @@ int main() {
     bool my = true;
     int * myintptr;
     int myarr [ 5 ];
-
-    intt testintt;
-    ddouble * testptr;
-    iint teestarr [ 5 ];
-    charr testchar;
 
     printf("Enter an operator (+, -, *,): ");
     scanf("%c", &operator);
